@@ -1,0 +1,42 @@
+{
+    "name": "webiny/website-analytics",
+    "type": "library",
+    "description": "Library that gathers common analytics data about your website visitors.",
+    "keywords": [
+        "analytics",
+        "time series"
+    ],
+    "homepage": "http://www.webiny.com/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sven Al Hamad",
+            "email": "sven@webiny.com"
+        },
+        {
+            "name": "Pavel Denisjuk",
+            "email": "pavel@webiny.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.5.9",
+        "webiny/analytics-db": "dev-master",
+        "webiny/geoip": "dev-master",
+        "mobiledetect/mobiledetectlib": "^2.8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4",
+        "mybuilder/phpunit-accelerator": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webiny\\WebsiteAnalytics\\": "src/Webiny/WebsiteAnalytics/"
+        }
+    },
+    "extras": {
+        "branch-alias": {
+            "dev-master": "master-dev"
+        }
+    }
+}

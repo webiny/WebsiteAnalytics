@@ -1,0 +1,15 @@
+MaxMind:
+    GeoLite2Url: http://geolite.maxmind.com/download/geoip/database/GeoLite2-City-CSV.zip
+    Language:  en
+Entity:
+    Database: GeoIp
+Mongo:
+    Services:
+        GeoIp:
+            Class: \Webiny\Component\Mongo\Mongo
+            Arguments:
+                Host: 127.0.0.1:27017
+                Database: LoginFoo ## CHANGE THIS
+                Username: null
+                Password: null
+                CollectionPrefix: ''
