@@ -75,7 +75,9 @@ class ReferrerType implements StatHandlerInterface
         '/twoo\.com/',
         '/mymfb\.com/',
         '/whatsapp\.com/',
-        '/medium\.com/'
+        '/medium\.com/',
+        '/producthunt\.com/',
+        '/news\.ycombinator\.com/'
     ];
 
     private $socialUtmSource = [
