@@ -20,8 +20,8 @@ For `visitors` and `url views` additional attributes are tracked:
 
 ### Dependencies
 
-The component requires an instance of [`Webiny/AnalyticsDb`](../../AnalyticsDb). Optionally, if you wish to track the `country` data, an instance
-of [`Webiny/GeoIp`](../../GeoIp) is required.
+The component requires an instance of [`Webiny/AnalyticsDb`](https://github.com/Webiny/AnalyticsDb). Optionally, if you wish to track the `country` data, an instance
+of [`Webiny/GeoIp`](https://github.com/Webiny/GeoIp) is required.
 
 ### Tracking
 To track the visitor data, you have to create the instance of `WebsiteAnalytics` and call the `saveStats` method, like so:
