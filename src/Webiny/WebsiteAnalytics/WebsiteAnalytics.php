@@ -12,6 +12,10 @@ use Webiny\AnalyticsDb\AnalyticsDb;
 use Webiny\Component\Http\HttpTrait;
 use Webiny\GeoIp\GeoIp;
 
+/**
+ * Class WebsiteAnalytics
+ * @package Webiny\WebsiteAnalytics
+ */
 class WebsiteAnalytics
 {
     use HttpTrait;
@@ -30,6 +34,9 @@ class WebsiteAnalytics
      */
     private $statHandlerObject;
 
+    /**
+     * @var array List of pre-built stat handlers.
+     */
     private $handlers = [
         'Webiny\WebsiteAnalytics\StatHandlers\Browser',
         'Webiny\WebsiteAnalytics\StatHandlers\Device',
@@ -38,9 +45,18 @@ class WebsiteAnalytics
         'Webiny\WebsiteAnalytics\StatHandlers\ReferrerType'
     ];
 
+    /**
+     * @var array List of stat handler instances.
+     */
     private $handlerInstances = [];
 
 
+    /**
+     * Base constructor.
+     *
+     * @param AnalyticsDb $analyticsDb AnalyticsDb instance.
+     * @param GeoIp|null  $geoIp       GeoIp instance. Only required if you wish to store visitor country information.
+     */
     public function __construct(AnalyticsDb $analyticsDb, GeoIp $geoIp = null)
     {
         $this->analyticsDb = $analyticsDb;
@@ -54,33 +70,56 @@ class WebsiteAnalytics
 
         // if we have GeoIp instance, add the Country handler
         if (is_object($geoIp)) {
-            $country = new StatHandlers\Country($this->statHandlerObject);
+            $country = $this->addStatHandler('Webiny\WebsiteAnalytics\StatHandlers\Country');
             $country->setGeoIpInstance($geoIp);
-
-            $this->addStatHandler($country);
         }
     }
 
+    /**
+     * Set user agent, otherwise use the current user agent from the http request.
+     *
+     * @param string $ua User-agent string.
+     */
     public function setUserAgent($ua)
     {
         $this->statHandlerObject->setUserAgent($ua);
     }
 
+    /**
+     * Set the IP address, otherwise use the current IP address from the client.
+     *
+     * @param string $ip IPv4 or IPv6 address.
+     */
     public function setIp($ip)
     {
         $this->statHandlerObject->setIp($ip);
     }
 
+    /**
+     * Set http request headers, otherwise use the headers from the current http request.
+     *
+     * @param array $headers List of http request headers.
+     */
     public function setHeaders($headers)
     {
         $this->statHandlerObject->setHeaders($headers);
     }
 
+    /**
+     * Set the timestamp for the analytics db, otherwise use the current timestamp.
+     *
+     * @param int $time Unix timestamp.
+     */
     public function setTimestamp($time)
     {
         $this->analyticsDb->setTimestamp((int)$time);
     }
 
+    /**
+     * Save the website analytics data.
+     *
+     * @return bool
+     */
     public function saveStats()
     {
         $session = $this->getSession();
@@ -119,21 +158,51 @@ class WebsiteAnalytics
         return true;
     }
 
+    /**
+     * Deletes the current session information.
+     */
     public function deleteSession()
     {
         $this->httpSession()->delete('webiny_website_analytics');
     }
 
-    public function addStatHandler(StatHandlerInterface $handler)
+    /**
+     * Add an additional stats handler.
+     *
+     * @param string $handler FQN of the custom stat handler class.
+     *
+     * @throws WebsiteAnalyticsException
+     *
+     * @return StatHandlerInterface instance of the given stat handler.
+     */
+    public function addStatHandler($handler)
     {
-        $this->handlerInstances[] = $handler;
+        $handlerInstance = new $handler($this->statHandlerObject);
+
+        if (!($handlerInstance instanceof \Webiny\WebsiteAnalytics\StatHandlerInterface)) {
+            throw new WebsiteAnalyticsException('Stat handler must implement "\Webiny\WebsiteAnalytics\StatHandlerInterface".');
+        }
+
+        $this->handlerInstances[] = $handlerInstance;
+
+        return $handlerInstance;
     }
 
+    /**
+     * Query the analytics data.
+     *
+     * @param array $dateRange Date range [unixFromDate, unixToDate].
+     *
+     * @return Query
+     */
     public function query(array $dateRange)
     {
         return new Query($this->analyticsDb, $dateRange);
     }
 
+    /**
+     * Initiates the current built-in handlers.
+     */
     private function initiateHandlers()
     {
         foreach ($this->handlers as $h) {
@@ -141,6 +210,12 @@ class WebsiteAnalytics
         }
     }
 
+    /**
+     * Checks if the session data exists. If it exists, it decodes the data and returns the session info array.
+     * If the session doesn't exist, false is returned.
+     *
+     * @return bool|array
+     */
     private function getSession()
     {
         $session = $this->httpSession()->get('webiny_website_analytics');
@@ -151,11 +226,23 @@ class WebsiteAnalytics
         return json_decode($session, true);
     }
 
+    /**
+     * Log a page view.
+     *
+     * @throws \Webiny\AnalyticsDb\AnalyticsDbException
+     */
     private function logPageView()
     {
         $this->analyticsDb->log(self::STAT_PAGE_VIEW);
     }
 
+    /**
+     * Log a url view.
+     *
+     * @param array $statHandlers List of stat handlers that will be added to the analytics db as a dimension.
+     *
+     * @throws \Webiny\AnalyticsDb\AnalyticsDbException
+     */
     private function logUrlView($statHandlers)
     {
         $url = $this->httpRequest()->getCurrentUrl(true)->getPath();
@@ -166,6 +253,13 @@ class WebsiteAnalytics
         }
     }
 
+    /**
+     * Log a visitor.
+     *
+     * @param array $statHandlers List of stat handlers that will be added to the analytics db as a dimension.
+     *
+     * @throws \Webiny\AnalyticsDb\AnalyticsDbException
+     */
     private function logVisitor($statHandlers)
     {
         $log = $this->analyticsDb->log(self::STAT_VISITOR);
@@ -174,6 +268,9 @@ class WebsiteAnalytics
         }
     }
 
+    /**
+     * Save the analytics data.
+     */
     private function saveLog()
     {
         $this->analyticsDb->save();

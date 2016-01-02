@@ -8,6 +8,10 @@
  */
 namespace Webiny\WebsiteAnalytics;
 
+/**
+ * Interface StatHandlerInterface
+ * @package Webiny\WebsiteAnalytics
+ */
 interface StatHandlerInterface
 {
     /**

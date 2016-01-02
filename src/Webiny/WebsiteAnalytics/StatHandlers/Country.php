@@ -12,6 +12,10 @@ use Webiny\GeoIp\GeoIp;
 use Webiny\WebsiteAnalytics\StatHandlerInterface;
 use Webiny\WebsiteAnalytics\StatHandlerObject;
 
+/**
+ * Class Country
+ * @package Webiny\WebsiteAnalytics\StatHandlers
+ */
 class Country implements StatHandlerInterface
 {
     const NAME = 'country';

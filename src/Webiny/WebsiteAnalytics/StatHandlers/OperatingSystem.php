@@ -11,6 +11,10 @@ namespace Webiny\WebsiteAnalytics\StatHandlers;
 use Webiny\WebsiteAnalytics\StatHandlerInterface;
 use Webiny\WebsiteAnalytics\StatHandlerObject;
 
+/**
+ * Class OperatingSystem
+ * @package Webiny\WebsiteAnalytics\StatHandlers
+ */
 class OperatingSystem implements StatHandlerInterface
 {
     const NAME = 'os';

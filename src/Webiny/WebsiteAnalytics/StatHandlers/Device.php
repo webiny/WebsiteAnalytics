@@ -11,6 +11,10 @@ namespace Webiny\WebsiteAnalytics\StatHandlers;
 use Webiny\WebsiteAnalytics\StatHandlerInterface;
 use Webiny\WebsiteAnalytics\StatHandlerObject;
 
+/**
+ * Class Device
+ * @package Webiny\WebsiteAnalytics\StatHandlers
+ */
 class Device implements StatHandlerInterface
 {
     const NAME = 'device';

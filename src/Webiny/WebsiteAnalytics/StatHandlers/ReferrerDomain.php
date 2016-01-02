@@ -13,6 +13,10 @@ use Webiny\Component\StdLib\StdObjectTrait;
 use Webiny\WebsiteAnalytics\StatHandlerInterface;
 use Webiny\WebsiteAnalytics\StatHandlerObject;
 
+/**
+ * Class ReferrerDomain
+ * @package Webiny\WebsiteAnalytics\StatHandlers
+ */
 class ReferrerDomain implements StatHandlerInterface
 {
     use HttpTrait, StdObjectTrait;

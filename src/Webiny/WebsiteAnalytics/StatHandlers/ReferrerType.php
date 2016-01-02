@@ -12,14 +12,24 @@ use Webiny\Component\Http\HttpTrait;
 use Webiny\WebsiteAnalytics\StatHandlerInterface;
 use Webiny\WebsiteAnalytics\StatHandlerObject;
 
+/**
+ * Class ReferrerType
+ * @package Webiny\WebsiteAnalytics\StatHandlers
+ */
 class ReferrerType implements StatHandlerInterface
 {
     use HttpTrait;
 
     const NAME = 'referrer_type';
 
+    /**
+     * @var StatHandlerObject
+     */
     private $statHandlerObject;
 
+    /**
+     * @var array List of most popular search engines.
+     */
     private $searchEngines = [
         '/\.google\./',
         '/\.bing\./',
@@ -46,6 +56,9 @@ class ReferrerType implements StatHandlerInterface
         '/\.lycos\./'
     ];
 
+    /**
+     * @var array List of most popular social network sites.
+     */
     private $socialSites = [
         '/facebook\.com/',
         '/plus\.google\.com/',
@@ -80,6 +93,9 @@ class ReferrerType implements StatHandlerInterface
         '/news\.ycombinator\.com/'
     ];
 
+    /**
+     * @var array Some common utm_source identificators for social networks.
+     */
     private $socialUtmSource = [
         'facebook',
         'fb',
@@ -98,6 +114,7 @@ class ReferrerType implements StatHandlerInterface
         'medium',
         'hootsuite'
     ];
+
 
     /**
      * Base constructor.
@@ -129,7 +146,9 @@ class ReferrerType implements StatHandlerInterface
         $refDomain = new ReferrerDomain($this->statHandlerObject);
         $host = $refDomain->getValue();
 
-        if (!$host) {
+        if (!$host || preg_match('/' . preg_quote($host, '/') . '/',
+                $this->httpRequest()->getCurrentUrl(true)->getHost())
+        ) {
             return 'direct';
         } else if ($this->isSearch($host)) {
             return 'search';
@@ -140,6 +159,13 @@ class ReferrerType implements StatHandlerInterface
         }
     }
 
+    /**
+     * Check if the referrer is a search engine.
+     *
+     * @param string $host Referrer host.
+     *
+     * @return bool
+     */
     private function isSearch($host)
     {
         foreach ($this->searchEngines as $e) {
@@ -151,6 +177,13 @@ class ReferrerType implements StatHandlerInterface
         return false;
     }
 
+    /**
+     * Check if the referrer is a social network.
+     *
+     * @param string $host Referrer host.
+     *
+     * @return bool
+     */
     private function isSocial($host)
     {
         foreach ($this->socialSites as $ss) {

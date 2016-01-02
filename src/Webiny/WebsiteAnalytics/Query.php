@@ -10,6 +10,10 @@ namespace Webiny\WebsiteAnalytics;
 
 use Webiny\AnalyticsDb\AnalyticsDb;
 
+/**
+ * Class Query
+ * @package Webiny\WebsiteAnalytics
+ */
 class Query
 {
     /**
@@ -22,6 +26,13 @@ class Query
      */
     private $analyticsDb;
 
+
+    /**
+     * Base constructor.
+     *
+     * @param AnalyticsDb $analyticsDb AnalyticsDb instance.
+     * @param array       $dateRange   Date range to do the lookup.
+     */
     public function __construct(AnalyticsDb $analyticsDb, array $dateRange)
     {
         $this->analyticsDb = $analyticsDb;
@@ -53,6 +64,7 @@ class Query
         $result = $this->analyticsDb->query(WebsiteAnalytics::STAT_VISITOR, 0, $this->dateRange)
                                     ->stats()
                                     ->groupByTimestamp()
+                                    ->sortByTimestamp(1)
                                     ->getResult();
 
         if ($result) {
@@ -71,6 +83,7 @@ class Query
                                     ->stats()
                                     ->monthly()
                                     ->groupByTimestamp()
+                                    ->sortByTimestamp(1)
                                     ->getResult();
 
         if ($result) {
@@ -97,6 +110,9 @@ class Query
                                     ->getResult();
 
         if ($result) {
+            if(!is_null($dimensionValue)){
+                return $result[0]['totalCount'];
+            }
             return $result;
         }
 

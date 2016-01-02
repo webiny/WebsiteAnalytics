@@ -25,9 +25,11 @@ $result = $stats->visitorsSum();
 $result = $stats->visitorsByDay();
 $result = $stats->visitorsByMonth();
 
+
 // dimensions (based on visitors)
-$result = $stats->visitorsDimensionSum(Browser::NAME);
+$result = $stats->visitorsDimensionSum(Browser::NAME, 'safari');
 $result = $stats->visitorsDimensionByDay(Country::NAME, 'HR');
+
 
 // page views (not unique)
 $result = $stats->pageViewsSum();
@@ -37,6 +39,7 @@ $result = $stats->pageViewsByMonth();
 // url - get top 10 pages
 $result = $stats->urlSum();
 
+
 // url - get total number of views for the given page
 $result = $stats->urlSum('/page-110/');
 $result = $stats->urlByDay('/page-860/');
@@ -44,6 +47,5 @@ $result = $stats->urlByMonth('/page-860/');
 
 $result = $stats->urlDimensionSum('/page-110/', Browser::NAME);
 $result = $stats->urlDimensionByDay('/page-110/', Browser::NAME);
+die(print_r($result));
 $result = $stats->urlDimensionByDay('/page-110/', Browser::NAME, 'chrome');
-
-// todo: provjeri zasto suma mjesecnih iznosa nije jednaka sumi 90 dana za page views, ista stvar kod url sum-a i url total counta za specifican url

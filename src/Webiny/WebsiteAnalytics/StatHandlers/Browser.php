@@ -11,10 +11,17 @@ namespace Webiny\WebsiteAnalytics\StatHandlers;
 use Webiny\WebsiteAnalytics\StatHandlerInterface;
 use Webiny\WebsiteAnalytics\StatHandlerObject;
 
+/**
+ * Class Browser
+ * @package Webiny\WebsiteAnalytics\StatHandlers
+ */
 class Browser implements StatHandlerInterface
 {
     const NAME = 'browser';
 
+    /**
+     * @var StatHandlerObject
+     */
     private $statHandlerObject;
 
     // first match wins
