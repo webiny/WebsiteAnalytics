@@ -6,7 +6,7 @@ This component helps you track your website visitors and some common attributes 
 The component tracks 3 different metrics:
 - `visitors` => unique website visitors
 - `page views` => non-unique website visitors
-- `url views` => view metrics for a particular url
+- `url views` => page view metrics for a particular url (not unique)
 
 For `visitors` and `url views` additional attributes are tracked:
 - `browser` => which browsers did the visitors use, eg, `chrome`, `firefox` .. etc
@@ -20,14 +20,14 @@ For `visitors` and `url views` additional attributes are tracked:
 
 ### Dependencies
 
-The component requires an instance of `Webiny/AnalyticsDb`. Optionally, if you wish to track the `country` data, and instance
-of `Webiny/GeoIp` is also required.
+The component requires an instance of [`Webiny/AnalyticsDb`](../AnalyticsDb). Optionally, if you wish to track the `country` data, an instance
+of [`Webiny/GeoIp`](../GeoIp) is required.
 
 ### Tracking
-To track the visitor data, you have to get the instance of `WebsiteAnalytics` and call the `saveStats` method, like so:
+To track the visitor data, you have to create the instance of `WebsiteAnalytics` and call the `saveStats` method, like so:
 
 ```php
-// get mongo instance
+// get mongo instance for AnalyticsDb
 $mongo = new \Webiny\Component\Mongo\Mongo('127.0.0.1:27017', 'MyDatabase');
 
 // create AnalyticsDb instance
@@ -57,8 +57,8 @@ $wa->saveStats();
 ### Query data
 
 In order to query your data, you need to call the `query` method, which will return an instance of `Query` class.
-The `query` method requires 1 parameter, which defines the time range within which the data should be queried.
-The date range is an array with 2 unix timestamps. Optionally you can use `Webiny\AnalyticsDb\DateHelper` class to get some commonly used date ranges, like `lastMont`, `thisWeek` ... etc. 
+The `query` method requires 1 parameter and that is the time range within which the data should be queried.
+The date range is an array with 2 unix timestamps. Optionally you can use `Webiny\AnalyticsDb\DateHelper` class to get some commonly used date ranges, like `lastMonth`, `thisWeek` ... etc. 
 
 ```php
 $wa = new \Webiny\WebsiteAnalytics\WebsiteAnalytics($a, $geoIp);
@@ -91,7 +91,7 @@ Returns the total number of visitors, per day for the given period in form of an
 
 ```php
 $stats->visitorsByDay();
-```php
+```
 
 The `_id` field represents the day timestamp, and the `totalCount` represents the number of visitors for that day.
 
@@ -126,7 +126,7 @@ Returns the total number of visitors, per month for the given period in form of 
 
 ```php
 $stats->visitorsByMonth();
-```php
+```
 
 The `_id` field represents the day timestamp, and the `totalCount` represents the number of visitors for that day.
 
@@ -158,7 +158,7 @@ Array
 
 Dimensions are attributes like `browser`, `country`, `device`, and other prior mentioned attributes on the top of the page.
 
-The `visitorsDimensionSum` method returns a summary of a dimension value for you visitors for the given period.
+The `visitorsDimensionSum` method returns a sum of a defined dimension value, of your visitors, for the given time period.
 
 The method takes a dimension name, and optionally a dimension value. If you only provide a dimension name, the results will be grouped by different dimension values, like so:
 
@@ -195,7 +195,7 @@ Result:
 )
 ```
 
-Additionally if you ase a dimension value, the method will return a sum only for that given value:
+Additionally if you set a dimension value, the method will return a sum only for that given value:
 
 ```php
 $stats->visitorsDimensionSum(Webiny\WebsiteAnalytics\StatHandlers\Browser::NAME, 'safari');
@@ -213,7 +213,7 @@ Returns a the number of visitors for the given dimension, grouped by day.
 Note that this method requires that you provide both dimension name and dimension value.
 
 ```php
-$stats->visitorsDimensionByDay(Country::NAME, 'GB');
+$stats->visitorsDimensionByDay(Webiny\WebsiteAnalytics\StatHandlers\Country::NAME, 'GB');
 ```
 
 Result:
@@ -342,12 +342,13 @@ $stats->urlDimensionByDay('/page-110/', Webiny\WebsiteAnalytics\StatHandlers\Bro
 $stats->urlDimensionByDay('/page-110/', Webiny\WebsiteAnalytics\StatHandlers\Browser::NAME, 'safari');
 ```
 
-### Adding custom dimensions (attributes)
+### Adding custom dimensions (attribute)
 
 To add a custom dimension, create a class and implement `StatHandlerInterface` and then register your stat handler with the `WebsiteAnalytics` instance, like so:
 
 ```php
-$myHandlerInstance = $this->addStatHandler('My\Custom\Handler');
+$waInstance = new \Webiny\WebsiteAnalytics\WebsiteAnalytics($analyticDb, $geo);
+$myHandlerInstance = $waInstance->addStatHandler('My\Custom\Handler\Name');
 ```
 
 Now your handler is registered and will track the registered attribute on each url visit and on each unique visitor. 
