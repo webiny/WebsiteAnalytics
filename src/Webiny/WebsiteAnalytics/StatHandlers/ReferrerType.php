@@ -112,7 +112,8 @@ class ReferrerType implements StatHandlerInterface
         'reddit',
         'stumbleupon',
         'medium',
-        'hootsuite'
+        'hootsuite',
+        'producthunt'
     ];
 
 
@@ -192,11 +193,15 @@ class ReferrerType implements StatHandlerInterface
             }
         }
 
-        $utmSource = $this->httpRequest()->query('utm_source');
-        if (!empty($utmSource)) {
-            foreach ($this->socialUtmSource as $utm) {
-                if (preg_match($utm, $utmSource)) {
-                    return true;
+        $queryRef = ['utm_source', 'ref'];
+
+        foreach($queryRef as $qr){
+            $utmSource = $this->httpRequest()->query($qr);
+            if (!empty($utmSource)) {
+                foreach ($this->socialUtmSource as $utm) {
+                    if (preg_match($utm, $utmSource)) {
+                        return true;
+                    }
                 }
             }
         }
